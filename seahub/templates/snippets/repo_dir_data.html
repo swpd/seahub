@@ -12,6 +12,9 @@
     </p>
     <div class="repo-op fright">
         {% if user_perm == 'rw' %}
+        <button id="del-dirents" class="op-btn hide"><span class="icon-trash"></span>{% trans "Delete"%}</button>
+        <button id="mv-dirents" class="op-btn hide"><span class="icon-move"></span>{% trans "Move"%}</button>
+        <button id="cp-dirents" class="op-btn hide"><span class="icon-copy"></span>{% trans "Copy"%}</button>
         <button data="{{ SITE_ROOT }}repo/upload_file/{{repo.id}}/?p={{ path|urlencode }}" id="upload-file" class="op-btn"><span class="icon-upload-alt"></span>{% trans "Upload"%}</button>
         <button id="add-new-dir" class="op-btn"><span class="icon-plus-sign-alt"></span>{% trans "New Directory"%}</button>
         <button id="add-new-file" class="op-btn"><span class="icon-plus-sign-alt"></span>{% trans "New File"%}</button>
@@ -27,6 +30,7 @@
 
 <table class="repo-file-list">
     <tr>
+        <th class="select"></th>
         <th class="star"></th>
         <th class="dirent-icon"></th>
         <th><span class="dirent-name">{% trans "Name"%} <span id="name-up" class="tri-bg tri-up-order-bg"></span> <span id="name-down" class="tri-bg tri-down-order-bg"></span></span></th>

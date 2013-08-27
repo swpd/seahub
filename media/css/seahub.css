@@ -1376,15 +1376,18 @@ textarea:-moz-placeholder {/* for FF */
     table-layout:auto;
     margin:0;
 }
+.repo-file-list .select {
+    width:15px;
+}
 .repo-file-list .star {
-    width:30px;
+    width:25px;
 }
 .repo-file-list .dirent-icon {
-    width:32px;
+    width:27px;
 }
 .repo-file-list .dirent-name {
     display:inline-block;
-    width:405px;
+    width:400px;
 }
 .repo-file-list .dirent-size {
     width:89px;
@@ -1395,15 +1398,20 @@ textarea:-moz-placeholder {/* for FF */
 .repo-file-list .dirent-op {
     width:250px;
 }
+.repo-file-list .checkbox-label,
+.repo-file-list .checkbox {
+    margin:0;
+}
 .repo-file-list th {
     padding-top:20px;
 }
-.repo-file-list .fixed-hd {
+#repo-file-list .fixed-hd {
     position:fixed;
     width:950px;
     background:#fff;
     top:0;
     z-index:11; /*make it on top of dirent op(popup)*/
+    border-color:#efefef; /*for repo-file-list-topbar*/
 }
 .repo-file-list .fixed-hd th {
     box-shadow:0 2px 2px -3px #aaa;
