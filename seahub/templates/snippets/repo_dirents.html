@@ -2,10 +2,7 @@
     {% for dirent in dir_list %}
     <tr class="dir-item" data-name="{{dirent.obj_name}}" data-time="{% if dirent.last_modified %}{{ dirent.last_modified }}{%else %}0{% endif %}">
         <td class="select">
-            <label for="" class="checkbox-label">
-                <span class="checkbox"><input type="checkbox" name="" value="" id="" class="checkbox-orig"></span>
-                <span class="checkbox-option"></span>
-            </label>
+            <span class="checkbox"><input type="checkbox" class="checkbox-orig" /></span>
         </td>
         <td class="star"></td>
         <td class="dirent-icon"><img src="{{ MEDIA_URL }}img/folder-icon-24.png" alt="{% trans "Directory icon"%}" /></td>
@@ -48,10 +45,7 @@
     {% for dirent in file_list %}
     <tr class="file-item" data-name="{{dirent.obj_name}}" data-time="{% if dirent.last_modified %}{{ dirent.last_modified }} {%else %}0{% endif %}">
         <td class="select">
-            <label for="" class="checkbox-label">
-                <span class="checkbox"><input type="checkbox" name="" value="" id="" class="checkbox-orig"></span>
-                <span class="checkbox-option"></span>
-            </label>
+            <span class="checkbox"><input type="checkbox" class="checkbox-orig" /></span>
         </td>
         <td class="star alc">
             {% if dirent.starred %}

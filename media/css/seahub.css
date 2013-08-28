@@ -1424,6 +1424,7 @@ textarea:-moz-placeholder {/* for FF */
 .file-star {
     cursor:pointer;
     line-height:19px;
+    vertical-align:middle;
 }
 .repo-file-list .repo-file-op {
     position:relative;

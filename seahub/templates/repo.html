@@ -321,7 +321,7 @@ function dirOP() {
 $('.path .dir-link').click(dirlinkClick);
 
 $('#del-dirents').click(function() {
-    var dirents = $('.checkbox-checked').parents('tr'),
+    var dirents = $('.checkbox-checked').parents('.dir-item, .file-item'),
         dirents_names = [];
     dirents.each(function() {
         dirents_names.push($(this).data('name'));
@@ -337,31 +337,29 @@ $('#del-dirents').click(function() {
         },
         success: function(data) {
             var deleted_len = data['deleted_dirents'].length,
-                dirents_len = dirents_names.length,
                 msg_s, msg_f;
-
-            if (deleted_len == dirents_len) { // all were deleted
-                dirents.remove();
-                msg = "{% trans "Successfully deleted %(name)s" %}".replace('%(name)s', dirents_names.join(', '));
-                feedback(msg, 'success'); 
+            
+            if (deleted_len > 0) {
+                if (deleted_len == dirents_names.length) {
+                    dirents.remove();
+                } else {
+                    dirents.each(function() {
+                        if ($(this).data('name') in data['deleted_dirents']) {
+                            $(this).remove();
+                        }
+                    }); 
+                }
+                msg_s = "{% trans "Successfully deleted %(name)s" %}".replace('%(name)s', data['deleted_dirents'].join(', '));
+                feedback(msg_s, 'success'); 
                 updateCmt();
-            } else if (deleted_len > 0 && deleted_len < dirents_len) { // some were deleted
-                dirents.each(function() {
-                    if ($(this).data('name') in data['deleted_dirents']) {
-                        $(this).remove();
-                    }
-                }); 
-                msg = "{% trans "Successfully deleted %(name)s" %}".replace('%(name)s', data['deleted_dirents'].join(', '));
-                feedback(msg, 'success'); 
-                updateCmt();
+            }
 
+            if (data['undeleted_dirents'].length > 0) {
                 msg_f = "{% trans "Internal error. Failed to delete %(name)s" %}".replace('%(name)s', data['undeleted_dirents'].join(', '));
-                feedback(msg, 'error'); 
-            } else {
-                msg_f = "{% trans "Internal error. Failed to delete %(name)s" %}".replace('%(name)s', data['undeleted_dirents'].join(', '));
-                feedback(msg, 'error'); 
+                feedback(msg_f, 'error'); 
             }
             $('#del-dirents, #mv-dirents, #cp-dirents').addClass('hide');
+            $('th.select .checkbox').removeClass('checkbox-checked');
         },
         error: ajaxErrorHandler
     });
@@ -434,6 +432,7 @@ $('#mv-dirents, #cp-dirents').click(function() {
 
                 $.modal.close();
                 $('#del-dirents, #mv-dirents, #cp-dirents').addClass('hide');
+                $('th.select .checkbox').removeClass('checkbox-checked');
 
                 if (success_len > 0) {
                     if (op == 'mv') {
@@ -535,6 +534,27 @@ $('#share-cur-dir').click(function() {
    showSharePopup(op, name, aj_url, type, cur_path);
 });
 
+//select all or not
+$('th .checkbox-orig').unbind().click(function() {
+    var dirents_op = $('#del-dirents, #mv-dirents, #cp-dirents');
+
+    // keep all checkbox in the same state: selected or not
+    // a case: select all, and then scroll to req 'more'...
+    $(this).parent().toggleClass('checkbox-checked');
+    if ($(this).parent().hasClass('checkbox-checked')) {
+        $('.checkbox').addClass('checkbox-checked');
+    } else {
+        $('.checkbox').removeClass('checkbox-checked');
+    }
+
+    // show buttons or not
+    if ($('.checkbox-checked').length > 0) {
+        dirents_op.removeClass('hide');
+    } else {
+        dirents_op.addClass('hide');
+    }
+});
+
 //sort
 $('#name-down, #name-up, #time-up, #time-down').click(sortDirent);
 
@@ -629,6 +649,7 @@ function reqDirData(url, func) {
         dataType: 'json',
         success: function(data) {
             $('#repo-file-list').html(data['html']);
+            $(window).scrollTop(0); // for case: before this request, window's scrollTop is already big enough and the 'fixed-hd' is already there...
             cur_path = data['path']; // update cur_path
             if (func) {
                 func(data);
@@ -695,28 +716,19 @@ var current_repo = [],
 {% endif %}
 
 function opOnDirent(context) { // added param 'context' for 'more' dirents requested with 'list_dir_more'
-var context = context || $('.dir-item, .file-item');
+    var context = context || $('.dir-item, .file-item');
 
 // select
 $('.checkbox-orig', context).unbind().click(function() {
+    var dirents_op = $('#del-dirents, #mv-dirents, #cp-dirents');
+
     $(this).parent().toggleClass('checkbox-checked');
-});
-$('.checkbox-label', context).click(function() {
-    var dirents_op = $('#del-dirents, #mv-dirents, #cp-dirents'),
-        dirent = $(this).parents('tr');
-    
+
     // show buttons or not
     if ($('.checkbox-checked', context).length > 0) {
         dirents_op.removeClass('hide');
     } else {
         dirents_op.addClass('hide');
-    }
-    
-    // highlight the current 'tr' or not
-    if ($('.checkbox-checked', $(this)).length > 0) {
-        dirent.addClass('hl').find('.repo-file-op').removeClass('vh');
-    } else {
-        dirent.removeClass('hl').find('.repo-file-op').addClass('vh');
     }
 });
 
