@@ -643,13 +643,21 @@ function changeLocation(data) {
     }
 }
 function reqDirData(url, func) {
+    var orig_wtop = $(window).scrollTop();
     $.ajax({
         url: url,
         cache: false,
         dataType: 'json',
         success: function(data) {
             $('#repo-file-list').html(data['html']);
-            $(window).scrollTop(0); // for case: before this request, window's scrollTop is already big enough and the 'fixed-hd' is already there...
+            
+            // both original dir list and new dir list are long
+            var repo_top = $('#repo-top'),
+                h = repo_top.offset().top + repo_top.outerHeight(true);
+            if (orig_wtop > h && $(window).scrollTop() == orig_wtop) {
+                $(window).scrollTop(h);
+            }
+
             cur_path = data['path']; // update cur_path
             if (func) {
                 func(data);
@@ -1256,7 +1264,6 @@ $(window).scroll(function() {
                     }
                 );
                 opOnDirent(more_dirents);
-                $('#name-down, #name-up, #time-up, #time-down').unbind().click(sortDirent);
                 if (data['dirent_more']) {
                     ele_more.data('start', data['more_start']); 
                 } else {
